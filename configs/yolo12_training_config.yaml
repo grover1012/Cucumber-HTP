@@ -1,0 +1,105 @@
+# YOLO12 Training Configuration for Cucumber Trait Extraction
+# Based on Ultralytics YOLO12 configuration - Latest and most advanced model
+
+# Model Configuration
+model:
+  architecture: "yolo12s"  # YOLO12 small (detection model)
+  # Options: yolo12n, yolo12s, yolo12m, yolo12l, yolo12x
+  # Note: YOLO12 models are detection models, not segmentation models
+  # For segmentation, consider YOLOv8-seg models
+  pretrained: true
+  freeze_backbone: false
+
+# Dataset Configuration
+dataset:
+  path: "data"
+  train: "annotations/train/images"
+  val: "annotations/valid/images"
+  test: "annotations/test/images"
+  nc: 9  # Number of classes from your Roboflow dataset
+  names: ['big_ruler', 'blue_dot', 'color_chart', 'cucumber', 'green_dot', 'label', 'objects', 'red_dot', 'ruler']
+  
+# Training Parameters
+training:
+  epochs: 150
+  batch_size: 4  # Very small batch size for CPU training
+  imgsz: 640  # Input image size
+  device: "cpu"  # Use CPU for training
+  
+# Optimization - YOLO12 specific
+optimizer:
+  name: "AdamW"
+  lr0: 0.001  # Initial learning rate
+  lrf: 0.01   # Final learning rate (lr0 * lrf)
+  momentum: 0.937
+  weight_decay: 0.0005
+  warmup_epochs: 3.0
+  warmup_momentum: 0.8
+  warmup_bias_lr: 0.1
+  
+# Data Augmentation - Optimized for YOLO12
+augmentation:
+  hsv_h: 0.015  # HSV-Hue augmentation (fraction)
+  hsv_s: 0.7    # HSV-Saturation augmentation (fraction)
+  hsv_v: 0.4    # HSV-Value augmentation (fraction)
+  degrees: 0.0   # Image rotation (+/- deg) - Keep 0 for cucumber orientation
+  translate: 0.1 # Image translation (+/- fraction)
+  scale: 0.5    # Image scale (+/- gain)
+  shear: 0.0    # Image shear (+/- deg)
+  perspective: 0.0  # Image perspective (+/- fraction), range 0-0.001
+  flipud: 0.0   # Image flip up-down (probability) - Keep 0 for cucumber orientation
+  fliplr: 0.5   # Image flip left-right (probability)
+  mosaic: 1.0   # Image mosaic (probability)
+  mixup: 0.0    # Image mixup (probability)
+  copy_paste: 0.0  # Segment copy-paste (probability)
+  
+# Loss Configuration - YOLO12 optimized
+loss:
+  box: 7.5      # Box loss gain
+  cls: 0.5      # Class loss gain
+  dfl: 1.5      # DFL loss gain
+  pose: 12.0    # Pose loss gain
+  kobj: 2.0     # Keypoint obj loss gain
+  label_smoothing: 0.0  # Label smoothing epsilon
+  
+# Validation
+validation:
+  save_period: 10  # Save checkpoint every x epochs
+  plots: true      # Save plots for train/val
+  save_json: false # Save a COCO-JSON results file
+  
+# Save Configuration
+save:
+  save_period: -1  # Save checkpoint every x epochs (disabled if < 1)
+  project: "cucumber_traits_yolo12"
+  name: "exp"
+  exist_ok: false  # Existing project/name ok, do not increment
+  pretrained: false
+  optimizer: true
+  save_hybrid: false
+  verbose: false
+  save_images: false
+  save_labels: false
+  save_crop: false
+  save_txt: false
+  save_conf: false
+  save_json: false
+  
+# Logging
+logging:
+  verbose: true
+  plots: true
+  save_hybrid: false
+  save_images: false
+  save_labels: false
+  save_crop: false
+  save_txt: false
+  save_conf: false
+  save_json: false
+
+# YOLO12 Specific Optimizations
+yolo12_optimizations:
+  use_flash_attention: false  # Set to true if you have compatible NVIDIA GPU
+  area_attention_regions: 4   # Number of regions for area attention (default: 4)
+  r_elan_blocks: 3            # Number of R-ELAN blocks
+  attention_mlp_ratio: 1.2    # MLP ratio for attention blocks (1.2 or 2.0)

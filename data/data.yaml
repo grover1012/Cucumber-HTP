@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 12
+names: ['big_ruler', 'blue_dot', 'cavity', 'color_chart', 'cucumber', 'green_dot', 'hollow', 'label', 'objects', 'red_dot', 'ruler', 'slice']
+
+roboflow:
+  workspace: kashish-phd
+  project: cucumber-htp-bufos
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/kashish-phd/cucumber-htp-bufos/dataset/2

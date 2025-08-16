@@ -1,0 +1,43 @@
+# Dataset configuration for YOLO12 training
+# Cucumber Trait Extraction Dataset
+
+# Dataset paths (relative to the data/ folder)
+train: annotations/train/images
+val: annotations/valid/images
+test: annotations/test/images
+
+# Number of classes
+nc: 12
+
+# Class names (matching your actual annotations)
+names:
+  0: big_ruler
+  1: blue_dot
+  2: cavity
+  3: color_chart
+  4: cucumber
+  5: green_dot
+  6: hollow
+  7: label
+  8: objects
+  9: red_dot
+  10: ruler
+  11: slice
+
+# Dataset metadata
+dataset_info:
+  description: "Cucumber High-Throughput Phenotyping Dataset"
+  version: "2.0"
+  classes: 12
+  train_images: 22
+  val_images: 6
+  test_images: 2
+  total_images: 30
+  
+# Roboflow information
+roboflow:
+  workspace: kashish-phd
+  project: cucumber-htp-bufos
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/kashish-phd/cucumber-htp-bufos/dataset/2

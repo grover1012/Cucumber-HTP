@@ -1,0 +1,83 @@
+# Dataset Configuration for Cucumber Trait Extraction
+
+# Class Definitions
+classes:
+  cucumber:
+    id: 0
+    name: "cucumber"
+    description: "Cucumber fruit - main object for trait extraction"
+    annotation_type: "segmentation"  # Use segmentation masks for accurate measurements
+    color: [0, 255, 0]  # Green for visualization
+    
+  ruler:
+    id: 1
+    name: "ruler"
+    description: "Measurement reference for size calibration"
+    annotation_type: "bounding_box"  # Bounding box is sufficient
+    color: [255, 0, 0]  # Red for visualization
+    
+  label:
+    id: 2
+    name: "label"
+    description: "Paper label containing accession ID"
+    annotation_type: "bounding_box"  # Bounding box for OCR region
+    color: [0, 0, 255]  # Blue for visualization
+    
+  color_chart:
+    id: 3
+    name: "color_chart"
+    description: "Color calibration reference"
+    annotation_type: "bounding_box"  # Bounding box for color normalization
+    color: [255, 255, 0]  # Yellow for visualization
+
+# Annotation Guidelines
+annotation_guidelines:
+  cucumber:
+    - "Draw segmentation mask around the entire cucumber fruit"
+    - "Include the entire fruit from tip to tip"
+    - "Avoid including stems or leaves unless they're part of the fruit"
+    - "Ensure mask is tight to the fruit boundary"
+    
+  ruler:
+    - "Draw bounding box around the entire ruler"
+    - "Include all visible measurement markings"
+    - "Ensure ruler is fully visible in the image"
+    
+  label:
+    - "Draw bounding box around the paper label"
+    - "Include the entire label area"
+    - "Ensure text is clearly readable"
+    - "Avoid including background objects"
+    
+  color_chart:
+    - "Draw bounding box around the entire color chart"
+    - "Include all color patches"
+    - "Ensure chart is well-lit and visible"
+
+# Dataset Split
+dataset_split:
+  train: 0.7    # 70% for training
+  validation: 0.2  # 20% for validation
+  test: 0.1     # 10% for testing
+
+# Image Requirements
+image_requirements:
+  min_resolution: [640, 640]
+  max_resolution: [4096, 4096]
+  supported_formats: ["jpg", "jpeg", "png", "bmp", "tiff"]
+  color_space: "RGB"
+  
+# Preprocessing
+preprocessing:
+  resize: true
+  target_size: [640, 640]
+  maintain_aspect_ratio: true
+  normalization: "imagenet"  # ImageNet normalization
+  augmentation: true
+  
+# Quality Control
+quality_control:
+  min_annotation_confidence: 0.8
+  min_object_size: 32  # Minimum object size in pixels
+  max_objects_per_image: 10
+  require_all_classes: false  # Not all images need all object types

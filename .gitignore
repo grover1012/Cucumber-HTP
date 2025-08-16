@@ -1,0 +1,104 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyTorch
+*.pth
+*.pt
+*.pkl
+*.ckpt
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+models/*.pt
+models/*.pth
+models/*.ckpt
+results/
+logs/
+*.log
+temp/
+tmp/
+
+# Data (large files)
+data/raw_images/*.jpg
+data/raw_images/*.png
+data/raw_images/*.jpeg
+data/annotations/*/images/*.jpg
+data/annotations/*/images/*.png
+data/annotations/*/images/*.jpeg
+data/annotations/*/labels/*.txt
+
+# Keep data structure but ignore large files
+!data/raw_images/.gitkeep
+!data/annotations/.gitkeep
+!data/annotations/*/.gitkeep
+!data/annotations/*/images/.gitkeep
+!data/annotations/*/labels/.gitkeep
+
+# SAM2 models (large files)
+models/sam2.1_hiera_tiny.pt
+models/sam2.1_hiera_small.pt
+models/sam2.1_hiera_base_plus.pt
+models/sam2.1_hiera_large.pt
+
+# SAM2 repository (will be cloned separately)
+sam2/
+
+# YOLO models
+models/yolo12/
+models/yolo8/
+
+# Output files
+*.zip
+*.tar.gz
+*.rar
+
+# Temporary files
+*.tmp
+*.temp

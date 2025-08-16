@@ -35,7 +35,7 @@ A state-of-the-art computer vision pipeline for automated cucumber trait extract
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/cucumber-htp.git
+git clone https://github.com/grover1012/Cucumber-HTP.git
 cd cucumber-htp
 ```
 
@@ -251,9 +251,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/cucumber-htp/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/cucumber-htp/discussions)
-- **Email**: your.email@example.com
+- **Issues**: [GitHub Issues](https://github.com/grover1012/Cucumber-HTP/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/grover1012/Cucumber-HTP/discussions)
+- **Repository**: [https://github.com/grover1012/Cucumber-HTP](https://github.com/grover1012/Cucumber-HTP)
 
 ## 🔬 Research Applications
 

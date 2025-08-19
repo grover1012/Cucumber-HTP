@@ -2,57 +2,140 @@
 
 # Class Definitions
 classes:
-  cucumber:
+  big_ruler:
     id: 0
-    name: "cucumber"
-    description: "Cucumber fruit - main object for trait extraction"
-    annotation_type: "segmentation"  # Use segmentation masks for accurate measurements
-    color: [0, 255, 0]  # Green for visualization
-    
-  ruler:
+    name: "big_ruler"
+    description: "Large ruler used for size calibration"
+    annotation_type: "bounding_box"
+    color: [255, 0, 0]
+
+  blue_dot:
     id: 1
-    name: "ruler"
-    description: "Measurement reference for size calibration"
-    annotation_type: "bounding_box"  # Bounding box is sufficient
-    color: [255, 0, 0]  # Red for visualization
-    
-  label:
+    name: "blue_dot"
+    description: "Blue marker dot"
+    annotation_type: "bounding_box"
+    color: [0, 0, 255]
+
+  cavity:
     id: 2
-    name: "label"
-    description: "Paper label containing accession ID"
-    annotation_type: "bounding_box"  # Bounding box for OCR region
-    color: [0, 0, 255]  # Blue for visualization
-    
+    name: "cavity"
+    description: "Interior cavity within the fruit"
+    annotation_type: "bounding_box"
+    color: [128, 0, 0]
+
   color_chart:
     id: 3
     name: "color_chart"
     description: "Color calibration reference"
-    annotation_type: "bounding_box"  # Bounding box for color normalization
-    color: [255, 255, 0]  # Yellow for visualization
+    annotation_type: "bounding_box"
+    color: [255, 255, 0]
+
+  cucumber:
+    id: 4
+    name: "cucumber"
+    description: "Whole cucumber fruit"
+    annotation_type: "segmentation"
+    color: [0, 255, 0]
+
+  green_dot:
+    id: 5
+    name: "green_dot"
+    description: "Green marker dot"
+    annotation_type: "bounding_box"
+    color: [0, 255, 255]
+
+  hollow:
+    id: 6
+    name: "hollow"
+    description: "Hollow section in a slice"
+    annotation_type: "bounding_box"
+    color: [128, 128, 128]
+
+  label:
+    id: 7
+    name: "label"
+    description: "Paper label containing accession ID"
+    annotation_type: "bounding_box"
+    color: [255, 0, 255]
+
+  objects:
+    id: 8
+    name: "objects"
+    description: "Miscellaneous background objects"
+    annotation_type: "bounding_box"
+    color: [255, 165, 0]
+
+  red_dot:
+    id: 9
+    name: "red_dot"
+    description: "Red marker dot"
+    annotation_type: "bounding_box"
+    color: [255, 0, 0]
+
+  ruler:
+    id: 10
+    name: "ruler"
+    description: "Small ruler for reference"
+    annotation_type: "bounding_box"
+    color: [255, 100, 0]
+
+  slice:
+    id: 11
+    name: "slice"
+    description: "Cross-section slice of cucumber"
+    annotation_type: "segmentation"
+    color: [0, 128, 0]
 
 # Annotation Guidelines
 annotation_guidelines:
+  big_ruler:
+    - "Draw bounding box around the entire large ruler"
+    - "Include all measurement markings"
+
+  blue_dot:
+    - "Draw bounding box tightly around each blue marker dot"
+
+  cavity:
+    - "Annotate interior cavities visible in slices"
+
+  color_chart:
+    - "Draw bounding box around the entire color chart"
+    - "Include all color patches"
+    - "Ensure chart is well-lit and visible"
+
   cucumber:
     - "Draw segmentation mask around the entire cucumber fruit"
     - "Include the entire fruit from tip to tip"
     - "Avoid including stems or leaves unless they're part of the fruit"
     - "Ensure mask is tight to the fruit boundary"
-    
-  ruler:
-    - "Draw bounding box around the entire ruler"
-    - "Include all visible measurement markings"
-    - "Ensure ruler is fully visible in the image"
-    
+
+  green_dot:
+    - "Draw bounding box tightly around each green marker dot"
+
+  hollow:
+    - "Draw bounding box around hollow center regions inside slices"
+
   label:
     - "Draw bounding box around the paper label"
     - "Include the entire label area"
     - "Ensure text is clearly readable"
     - "Avoid including background objects"
-    
-  color_chart:
-    - "Draw bounding box around the entire color chart"
-    - "Include all color patches"
-    - "Ensure chart is well-lit and visible"
+
+  objects:
+    - "Tag miscellaneous background objects that are not part of other classes"
+
+  red_dot:
+    - "Draw bounding box tightly around each red marker dot"
+
+  ruler:
+    - "Draw bounding box around the small ruler"
+    - "Include all visible measurement markings"
+    - "Ensure ruler is fully visible in the image"
+
+  slice:
+    - "Draw segmentation mask around each cucumber slice"
+    - "Follow the outer boundary of the slice"
+    - "Exclude interior cavities or hollows unless labeled separately"
 
 # Dataset Split
 dataset_split:

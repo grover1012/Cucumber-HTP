@@ -2,13 +2,9 @@
 # Based on Ultralytics YOLO12 configuration - Latest and most advanced model
 
 # Model Configuration
-model:
-  architecture: "yolo12s"  # YOLO12 small (detection model)
-  # Options: yolo12n, yolo12s, yolo12m, yolo12l, yolo12x
-  # Note: YOLO12 models are detection models, not segmentation models
-  # For segmentation, consider YOLOv8-seg models
-  pretrained: true
-  freeze_backbone: false
+model: "models/yolo12_coco_pretrained.pt"  # Path to pretrained YOLO12 weights
+pretrained: true
+freeze_backbone: false
 
 # Dataset Configuration
 dataset:

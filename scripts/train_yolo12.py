@@ -35,6 +35,12 @@ def main():
         default='n',
         help="YOLO12 model size: n(nano), s(small), m(medium), l(large), x(extra-large) (default: n)"
     )
+
+    parser.add_argument(
+        "--pretrained",
+        type=str,
+        help="Path to pretrained YOLO12 weights to load before training",
+    )
     
     parser.add_argument(
         "--epochs",
@@ -97,9 +103,14 @@ def main():
     trainer.config['training']['imgsz'] = args.image_size
     trainer.config['training']['device'] = args.device
     
-    # Set model architecture based on size
-    model_architecture = f"yolo12{args.model_size}"  # YOLO12 models don't have -seg.pt suffix
-    trainer.config['model']['architecture'] = model_architecture
+    # Determine model architecture or pretrained weights
+    if args.pretrained:
+        model_architecture = args.pretrained
+    else:
+        model_architecture = f"yolo12{args.model_size}"
+
+    # Store selected model path in configuration
+    trainer.config['model'] = model_architecture
     
     print(f"\n=== YOLO12 Training Configuration ===")
     print(f"Model: {model_architecture}")

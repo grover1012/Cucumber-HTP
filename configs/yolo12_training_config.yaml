@@ -25,12 +25,14 @@ training:
   batch_size: 4  # Very small batch size for CPU training
   imgsz: 640  # Input image size
   device: "cpu"  # Use CPU for training
+  patience: 20  # Early stopping patience
   
 # Optimization - YOLO12 specific
 optimizer:
   name: "AdamW"
   lr0: 0.001  # Initial learning rate
   lrf: 0.01   # Final learning rate (lr0 * lrf)
+  cos_lr: false  # Use cosine learning rate schedule
   momentum: 0.937
   weight_decay: 0.0005
   warmup_epochs: 3.0

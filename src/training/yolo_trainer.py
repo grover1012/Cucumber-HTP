@@ -198,7 +198,10 @@ class YOLOTrainer:
             'project': output_dir,
             'name': 'cucumber_traits',
             'exist_ok': True,
-            'patience': 20,  # Early stopping patience
+            'patience': self.config['training'].get('patience', 20),
+            'lr0': self.config['optimizer'].get('lr0', 0.001),
+            'lrf': self.config['optimizer'].get('lrf', 0.01),
+            'cos_lr': self.config['optimizer'].get('cos_lr', False),
             'save_period': self.config['validation']['save_period'],
             'plots': self.config['validation']['plots'],
             'save_json': self.config['validation']['save_json']

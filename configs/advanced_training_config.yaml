@@ -1,0 +1,140 @@
+# Advanced YOLO12 Training Configuration
+# Multi-Stage Fine-tuning: COCO → Agricultural → Cucumber
+
+# Model Configuration
+model_size: "l"  # Options: n, s, m, l, x (nano, small, medium, large, extra-large)
+project_name: "cucumber_htp_advanced"
+
+# Training Parameters
+imgsz: 640
+batch_size: 16  # Adjust based on your GPU memory
+device: "auto"  # auto, cpu, or cuda:0, cuda:1, etc.
+learning_rate: 0.01
+patience: 50
+save_period: 10
+
+# Stage 1: COCO Pre-trained (Automatic)
+# YOLO12 models come pre-trained on COCO dataset
+# No additional configuration needed
+
+# Stage 2: Agricultural Fine-tuning (Optional)
+enable_agricultural_finetuning: false  # Set to true if you have agricultural datasets
+agricultural_dataset_path: "data/agricultural_dataset.yaml"  # Path to agricultural dataset
+agricultural_epochs: 50  # Conservative fine-tuning
+
+# Stage 3: Cucumber Fine-tuning (Main Task)
+cucumber_dataset_path: "data/dataset.yaml"  # Your cucumber dataset
+cucumber_epochs: 200  # Full training on cucumber data
+
+# Advanced Training Options
+training_options:
+  # Learning Rate Scheduling
+  cos_lr: true  # Cosine learning rate scheduling
+  warmup_epochs: 3
+  warmup_momentum: 0.8
+  warmup_bias_lr: 0.1
+  
+  # Data Augmentation
+  mosaic: 1.0
+  mixup: 0.1
+  copy_paste: 0.1
+  degrees: 30.0  # Random rotation
+  translate: 0.1  # Random translation
+  scale: 0.5  # Random scaling
+  shear: 0.0  # Random shearing
+  perspective: 0.0  # Random perspective
+  flipud: 0.0  # Random vertical flip
+  fliplr: 0.5  # Random horizontal flip
+  
+  # Regularization
+  weight_decay: 0.0005
+  dropout: 0.1
+  
+  # Loss Function
+  box: 7.5  # Box loss gain
+  cls: 0.5  # Class loss gain
+  dfl: 1.5  # DFL loss gain
+  pose: 12.0  # Pose loss gain
+  kobj: 2.0  # Keypoint obj loss gain
+  
+  # Optimization
+  optimizer: "auto"  # auto, SGD, Adam, AdamW, NAdam, RAdam, etc.
+  momentum: 0.937
+  nesterov: true
+
+# Validation Settings
+validation:
+  val: true
+  save_json: true
+  save_hybrid: false
+  conf: 0.001
+  iou: 0.6
+  max_det: 300
+  half: true
+  dnn: false
+
+# Export Settings
+export:
+  format: ["onnx", "torchscript", "tflite"]
+  half: true
+  simplify: true
+  dynamic: true
+  int8: false
+
+# Logging and Monitoring
+logging:
+  verbose: true
+  save_period: 10
+  plots: true
+  save_txt: false
+  save_conf: false
+  save_crop: false
+
+# Hardware Optimization
+hardware:
+  workers: 8  # Number of worker threads
+  cache: false  # Cache images for faster training
+  amp: true  # Automatic mixed precision
+  single_cls: false  # Train as single-class dataset
+
+# Dataset Information
+dataset_info:
+  total_images: 2000
+  classes: 8
+  class_names:
+    - cucumber_whole
+    - cucumber_sliced
+    - cucumber_partial
+    - cucumber_damaged
+    - ruler
+    - label
+    - color_chart
+    - background_objects
+  
+  # Expected performance targets
+  performance_targets:
+    training_accuracy: "> 95%"
+    validation_accuracy: "> 90%"
+    test_accuracy: "> 85%"
+    real_world_accuracy: "> 80%"
+
+# Notes and Instructions
+notes: |
+  This configuration implements a 3-stage fine-tuning strategy:
+  
+  1. COCO Pre-trained: YOLO12 models come pre-trained on COCO dataset
+  2. Agricultural Fine-tuning: Optional stage for domain adaptation
+  3. Cucumber Fine-tuning: Main training on your cucumber dataset
+  
+  To use this configuration:
+  1. Ensure your dataset.yaml is properly configured
+  2. Adjust batch_size based on your GPU memory
+  3. Set device to "cuda" if you have GPU access
+  4. Run: python3 scripts/advanced_yolo12_training.py --config configs/advanced_training_config.yaml
+  
+  Expected training time:
+  - Stage 1: Instant (model loading)
+  - Stage 2: 2-4 hours (if enabled)
+  - Stage 3: 8-16 hours (depending on dataset size and hardware)
+  
+  Total expected time: 10-20 hours for complete pipeline

@@ -25,6 +25,7 @@ training:
   batch_size: 4  # Very small batch size for CPU training
   imgsz: 640  # Input image size
   device: "cpu"  # Use CPU for training
+  augment: true  # Enable augmentation pipeline
   
 # Optimization - YOLO12 specific
 optimizer:

@@ -12,6 +12,11 @@ import random
 import json
 from ultralytics import YOLO
 
+try:
+    import albumentations as A
+except Exception:
+    A = None
+
 
 class YOLOTrainer:
     """
@@ -36,6 +41,29 @@ class YOLOTrainer:
         with open(self.config_path, 'r') as f:
             config = yaml.safe_load(f)
         return config
+
+    def _build_augmentations(self):
+        """Build Albumentations pipeline from config if available."""
+        if A is None:
+            return None
+        aug_cfg = self.config.get('augmentation', {})
+        transforms = []
+        if aug_cfg.get('hsv_h') or aug_cfg.get('hsv_s') or aug_cfg.get('hsv_v'):
+            transforms.append(
+                A.HueSaturationValue(
+                    hue_shift_limit=int(aug_cfg.get('hsv_h', 0) * 255),
+                    sat_shift_limit=int(aug_cfg.get('hsv_s', 0) * 255),
+                    val_shift_limit=int(aug_cfg.get('hsv_v', 0) * 255),
+                    p=1.0,
+                )
+            )
+        if aug_cfg.get('flipud', 0) > 0:
+            transforms.append(A.VerticalFlip(p=aug_cfg['flipud']))
+        if aug_cfg.get('fliplr', 0) > 0:
+            transforms.append(A.HorizontalFlip(p=aug_cfg['fliplr']))
+        if not transforms:
+            return None
+        return A.Compose(transforms)
     
     def prepare_dataset(self, raw_images_dir: str, 
                        annotations_dir: str,
@@ -201,8 +229,13 @@ class YOLOTrainer:
             'patience': 20,  # Early stopping patience
             'save_period': self.config['validation']['save_period'],
             'plots': self.config['validation']['plots'],
-            'save_json': self.config['validation']['save_json']
+            'save_json': self.config['validation']['save_json'],
+            'augment': self.config['training'].get('augment', False)
         }
+
+        augmentations = self._build_augmentations() if self.config['training'].get('augment', False) else None
+        if augmentations is not None:
+            train_params['augmentations'] = augmentations
         
         # Start training
         results = model.train(**train_params)

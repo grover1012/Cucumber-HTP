@@ -68,6 +68,18 @@ class EnhancedTraitExtractor:
             (0, 255, 255),  # Yellow for ruler
             (255, 192, 203) # Pink for slice
         ]
+
+        # Normalized prompt templates for SAM2 segmentation
+        # Coordinates are given relative to the bounding box (range 0-1)
+        self.prompt_templates = {
+            "cucumber": np.array([
+                [0.5, 0.5],   # Center
+                [0.2, 0.2],   # Top-left
+                [0.8, 0.2],   # Top-right
+                [0.2, 0.8],   # Bottom-left
+                [0.8, 0.8],   # Bottom-right
+            ])
+        }
         
         # Load models
         self._load_yolo_model()
@@ -213,6 +225,18 @@ class EnhancedTraitExtractor:
                     detections.append(detection)
         
         return detections
+
+    def _get_prompt_points(self, bbox: List[float], template_key: str = "cucumber") -> Optional[np.ndarray]:
+        """Calculate absolute prompt points using a predefined template."""
+        template = self.prompt_templates.get(template_key)
+        if template is None:
+            return None
+        x1, y1, x2, y2 = bbox
+        w, h = x2 - x1, y2 - y1
+        points = template.copy()
+        points[:, 0] = x1 + points[:, 0] * w
+        points[:, 1] = y1 + points[:, 1] * h
+        return points
     
     def generate_segmentation_mask(self, image: np.ndarray, bbox: List[float]) -> np.ndarray:
         """
@@ -243,19 +267,20 @@ class EnhancedTraitExtractor:
             
             # Generate mask
             if self.sam_version == "sam2":
-                # SAM2 specific prediction - convert bbox to point prompts
-                x1, y1, x2, y2 = bbox
-                center_x = (x1 + x2) / 2
-                center_y = (y1 + y2) / 2
-                
-                # Use center point as prompt
+                # Use predefined prompt template; fall back to center point
+                points = self._get_prompt_points(bbox)
+                if points is None or len(points) == 0:
+                    center_x = (x1 + x2) / 2
+                    center_y = (y1 + y2) / 2
+                    points = np.array([[center_x, center_y]])
+                point_labels = np.ones(len(points), dtype=int)
                 masks, scores, logits = self.sam_predictor.predict(
-                    point_coords=np.array([[center_x, center_y]]),
-                    point_labels=np.array([1]),  # Positive point
+                    point_coords=points,
+                    point_labels=point_labels,
                     multimask_output=False
                 )
             else:
-                # Original SAM prediction
+                # Original SAM prediction using box prompt
                 masks, scores, logits = self.sam_predictor.predict(
                     box=sam_bbox,
                     multimask_output=False

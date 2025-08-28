@@ -1,0 +1,13 @@
+# SAM2 and YOLO dependencies
+torch>=2.0.0
+torchvision>=0.15.0
+opencv-python>=4.8.0
+matplotlib>=3.7.0
+numpy>=1.24.0
+pillow>=10.0.0
+ultralytics>=8.0.0
+PyYAML>=6.0
+
+# SAM2 (choose one)
+# git+https://github.com/facebookresearch/segment-anything.git
+# git+https://github.com/SysCV/sam-hq.git

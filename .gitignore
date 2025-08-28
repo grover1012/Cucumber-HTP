@@ -102,3 +102,46 @@ models/yolo8/
 # Temporary files
 *.tmp
 *.temp
+
+# Large model weight files (exclude all .pt files in models subdirectories)
+models/*/weights/*.pt
+models/*/weights/*.pth
+models/*/weights/*.ckpt
+models/*/best.pt
+models/*/last.pt
+models/*/epoch*.pt
+
+# Training outputs and backups
+training_backup_epoch*/
+outputs/models/*/weights/
+outputs/models/*/best.pt
+outputs/models/*/last.pt
+outputs/models/*/epoch*.pt
+
+# Large image files
+*.jpg
+*.jpeg
+*.png
+*.JPG
+*.JPEG
+*.PNG
+
+# Keep specific small images for documentation
+!data/clean_dataset/*/images/*.jpg
+!data/clean_dataset/*/images/*.png
+!data/clean_dataset/*/images/*.jpeg
+!data/new_annotations/*/images/*.jpg
+!data/new_annotations/*/images/*.png
+!data/new_annotations/*/images/*.jpeg
+!data/sam2_annotations/*/images/*.jpg
+!data/sam2_annotations/*/images/*.png
+!data/sam2_annotations/*/images/*.jpeg
+
+# Cache files
+*.cache
+labels.cache
+
+# Large data files
+*.xlsx
+*.xls
+*.csv

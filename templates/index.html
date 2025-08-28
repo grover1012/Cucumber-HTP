@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥒 Cucumber HTP - Model Testing Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .upload-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 2px dashed #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            border-color: #28a745;
+            background: #f0f8f0;
+        }
+
+        .upload-area {
+            border: 2px dashed #28a745;
+            border-radius: 10px;
+            padding: 40px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            background: #f0f8f0;
+            border-color: #20c997;
+        }
+
+        .upload-area.dragover {
+            background: #e8f5e8;
+            border-color: #20c997;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-text {
+            font-size: 1.2em;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .upload-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .model-status {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .status-indicator.loaded { background: #28a745; }
+        .status-indicator.not-loaded { background: #dc3545; }
+
+        .load-model-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-left: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .load-model-btn:hover { background: #0056b3; transform: translateY(-1px); }
+
+        .results-section {
+            display: none;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-card h3 {
+            color: #28a745;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+
+        .metric { display: flex; justify-content: space-between; margin-bottom: 10px; padding: 8px 0; border-bottom: 1px solid #f1f3f4; }
+        .metric-label { font-weight: 600; color: #495057; }
+        .metric-value { color: #28a745; font-weight: 600; }
+
+        .visualization { text-align: center; margin-top: 20px; }
+        .visualization img { max-width: 100%; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+
+        .loading { display: none; text-align: center; padding: 40px; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #28a745; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 10px; padding: 15px; margin: 20px 0; text-align: center; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 10px; padding: 15px; margin: 20px 0; text-align: center; }
+
+        .footer { background: #343a40; color: white; text-align: center; padding: 20px; font-size: 0.9em; }
+
+        @media (max-width: 768px) { .results-grid { grid-template-columns: 1fr; } .header h1 { font-size: 2em; } .main-content { padding: 20px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🥒 Cucumber HTP</h1>
+            <div class="subtitle">High-Throughput Phenotyping Model Testing Interface</div>
+            <div class="subtitle">Upload images to test your trained YOLOv8 segmentation model</div>
+        </div>
+
+        <div class="main-content">
+            <div class="model-status">
+                <span class="status-indicator" id="statusIndicator"></span>
+                <strong id="statusText">Checking model status...</strong>
+                <button class="load-model-btn" id="loadModelBtn" onclick="loadModel()">Load Model</button>
+            </div>
+
+            <div class="upload-section">
+                <h2>📤 Upload Cucumber Image</h2>
+                <p class="upload-text">Drag & drop an image or click to select</p>
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📷</div>
+                    <p>Click to select image or drag & drop here</p>
+                    <p style="font-size: 0.9em; color: #6c757d; margin-top: 10px;">Supports: JPG, PNG, JPEG (Max: 16MB)</p>
+                </div>
+                <input type="file" id="fileInput" class="file-input" accept="image/*" onchange="handleFileSelect(event)">
+                <button class="upload-btn" id="uploadBtn" onclick="uploadFile()" disabled>Process Image</button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processing image through your trained model...</p>
+                <p style="font-size: 0.9em; color: #6c757d;">This may take a few seconds</p>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+                <h2>📊 Analysis Results</h2>
+                <div class="results-grid">
+                    <div class="result-card">
+                        <h3>🔍 Detection Summary</h3>
+                        <div class="metric"><span class="metric-label">Total Detections:</span><span class="metric-value" id="totalDetections">-</span></div>
+                        <div class="metric"><span class="metric-label">Cucumbers Found:</span><span class="metric-value" id="cucumbersFound">-</span></div>
+                        <div class="metric"><span class="metric-label">Ruler Detected:</span><span class="metric-value" id="rulerDetected">-</span></div>
+                        <div class="metric"><span class="metric-label">Processing Time:</span><span class="metric-value" id="processingTime">-</span></div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>📏 Trait Measurements</h3>
+                        <div id="traitsContainer"><p style="color: #6c757d; text-align: center;">Upload an image to see trait measurements</p></div>
+                    </div>
+                </div>
+
+                <div class="visualization" id="visualizationContainer"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🥒 Cucumber High-Throughput Phenotyping Pipeline</p>
+            <p>Powered by YOLOv8 with EdgeBoost + EdgeLoss</p>
+        </div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+        let modelLoaded = false;
+
+        window.onload = function() { checkModelStatus(); };
+
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+        uploadArea.addEventListener('dragleave', () => { uploadArea.classList.remove('dragover'); });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault(); uploadArea.classList.remove('dragover'); const files = e.dataTransfer.files; if (files.length > 0) { handleFile(files[0]); }
+        });
+
+        function handleFileSelect(event) { const file = event.target.files[0]; if (file) { handleFile(file); } }
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) { alert('Please select an image file'); return; }
+            selectedFile = file; document.getElementById('uploadBtn').disabled = false;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadArea.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 200px; border-radius: 10px;"><p style="margin-top: 15px;">${file.name}</p><p style="font-size: 0.9em; color: #28a745;">Ready to process!</p>`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function uploadFile() {
+            if (!selectedFile) { alert('Please select a file first'); return; }
+            if (!modelLoaded) { alert('Please load the model first'); return; }
+
+            const formData = new FormData(); formData.append('file', selectedFile);
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('resultsSection').style.display = 'none';
+
+            fetch('/upload', { method: 'POST', body: formData })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('loading').style.display = 'none';
+                if (data.error) { showError(data.error); } else { showResults(data); }
+            })
+            .catch(err => { document.getElementById('loading').style.display = 'none'; showError('Error processing image: ' + err.message); });
+        }
+
+        function showResults(data) {
+            document.getElementById('totalDetections').textContent = data.detections ?? '-';
+            document.getElementById('cucumbersFound').textContent = data.cucumbers_found ?? '-';
+            document.getElementById('rulerDetected').textContent = data.ruler_detected ? 'Yes' : 'No';
+            const pt = data.processing_time;
+            document.getElementById('processingTime').textContent = (typeof pt === 'number') ? (pt.toFixed(2) + 's') : (pt || 'N/A');
+
+            const traitsContainer = document.getElementById('traitsContainer');
+            if (Array.isArray(data.traits) && data.traits.length > 0) {
+                let traitsHtml = '';
+                data.traits.forEach((trait, i) => {
+                    const length = trait.length_cm !== 'N/A' ? `${trait.length_cm} px` : 'N/A';
+                    const width = trait.width_cm !== 'N/A' ? `${trait.width_cm} px` : 'N/A';
+                    const area = trait.area_cm2 !== 'N/A' ? `${trait.area_cm2} px²` : 'N/A';
+                    const aspect = trait.aspect_ratio !== 'N/A' ? trait.aspect_ratio.toFixed(2) : 'N/A';
+                    
+                    traitsHtml += `<div style="margin-bottom: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #28a745;"><h4 style="color: #28a745; margin-bottom: 10px;">🥒 Cucumber ${i + 1}</h4><div class="metric"><span class="metric-label">Length:</span><span class="metric-value">${length}</span></div><div class="metric"><span class="metric-label">Width:</span><span class="metric-value">${width}</span></div><div class="metric"><span class="metric-label">Area:</span><span class="metric-value">${area}</span></div><div class="metric"><span class="metric-label">Aspect Ratio:</span><span class="metric-value">${aspect}</span></div></div>`;
+                });
+                traitsContainer.innerHTML = traitsHtml;
+            } else {
+                traitsContainer.innerHTML = '<p style="color: #6c757d; text-align: center;">No trait measurements available</p>';
+            }
+
+            const vizContainer = document.getElementById('visualizationContainer');
+            if (data.visualization) {
+                vizContainer.innerHTML = `<h3 style="margin-bottom: 20px;">🖼️ Detection Visualization</h3><img src="data:image/png;base64,${data.visualization}" alt="Detection Results">`;
+            } else {
+                vizContainer.innerHTML = '<p style="color: #6c757d; text-align: center;">Visualization not available</p>';
+            }
+
+            document.getElementById('resultsSection').style.display = 'block';
+        }
+
+        function showError(message) {
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.innerHTML = `<div class="error">${message}</div>`;
+            resultsSection.style.display = 'block';
+        }
+
+        function checkModelStatus() {
+            fetch('/model_status').then(r => r.json()).then(data => { updateModelStatus(data.model_loaded, data.model_path); }).catch(() => { updateModelStatus(false, null); });
+        }
+
+        function updateModelStatus(loaded, modelPath) {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const loadBtn = document.getElementById('loadModelBtn');
+            if (loaded) { statusIndicator.className = 'status-indicator loaded'; statusText.textContent = 'Model loaded successfully!'; loadBtn.style.display = 'none'; modelLoaded = true; }
+            else { statusIndicator.className = 'status-indicator not-loaded'; statusText.textContent = 'Model not loaded. Click "Load Model" to continue.'; loadBtn.style.display = 'inline-block'; modelLoaded = false; }
+        }
+
+        function loadModel() { fetch('/load_model', { method: 'POST' }).then(r => r.json()).then(data => { if (data.success) { checkModelStatus(); alert('Model loaded successfully!'); } else { alert('Error loading model: ' + data.message); } }).catch(err => { alert('Error loading model: ' + err.message); }); }
+    </script>
+</body>
+</html>
